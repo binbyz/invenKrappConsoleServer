@@ -7,8 +7,7 @@
 const express   = require('express');
 const http      = require('http');
 const WebSocket = require('ws');
-const fs        = require('fs');
-const tfs       = require('tail-stream');
+const tfsWrap   = require('./tailStreamWrapper');
 
 const app    = express();
 const server = http.createServer(app);
@@ -18,22 +17,24 @@ const PATH_NGINX_ACCESS_LOG = '/var/log/nginx/access.log';
 const PATH_NGINX_ERROR_LOG  = '/var/log/nginx/error.log';
 const FILE_REFRESH_INTERVAL = 100;
 
-let sessions = [];
-let streams = [];
+let fAccessLog = new tfsWrap(PATH_NGINX_ACCESS_LOG, 'nginx', 'access', FILE_REFRESH_INTERVAL);
+let fErrorLog  = new tfsWrap(PATH_NGINX_ERROR_LOG, 'nginx', 'error', FILE_REFRESH_INTERVAL);
 
-streams.push(tfs.createReadStream(PATH_NGINX_ACCESS_LOG, { interval: FILE_REFRESH_INTERVAL }));
-streams.push(tfs.createReadStream(PATH_NGINX_ERROR_LOG, { interval: FILE_REFRESH_INTERVAL }));
+let sessions = [];
+let streams  = [];
+
+streams.push(fAccessLog, fErrorLog);
 
 for (let f in streams) {
   streams[f].on('data', (chunk) => {
-    let decoded = chunk.toString();
+    chunk = chunk.toString();
 
     if (sessions.length) {
       for (let s in sessions) {
         let socket = sessions[s];
 
         if (socket.readyState === 1) {
-          socket.send(decoded);
+          socket.send(chunk);
         }
       }
     }
