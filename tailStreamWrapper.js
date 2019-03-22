@@ -1,24 +1,34 @@
+const fs = require('fs');
 const tfs = require('tail-stream');
 
 /**
  * tailStreamWrapper
- * @param {String} path 
  * @param {String} namespace 
- * @param {String} category 
+ * @param {String} path 
  * @param {Integer} interval 
  */
-function tailStreamWrapper(path, namespace = '', category = '', interval = 100) {
+function tailStreamWrapper(namespace = '', path, interval = 100) {
   let t;
 
-  if (!path) throw new Error("input path");
-  t = tfs.createReadStream(path, { interval: interval });
-
-  if (namespace) {
-    t._namespace = namespace;
+  if (!path) {
+    throw new Error("input path");
   }
 
-  if (category) {
-    t._category = category;
+  if (!fs.existsSync(path)) {
+    throw new Error("file not exists!");
+  }
+
+  t = tfs.createReadStream(path, { interval: interval });
+  namespace = namespace.trim();
+
+  if (namespace) {
+    t.namespace = namespace;
+  }
+
+  t.pipe = (o) => {
+    if (o) {
+      t.on('data', o._read);
+    }
   }
 
   return t;
