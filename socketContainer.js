@@ -1,3 +1,5 @@
+const BSON = require('bson');
+
 function socketContainer() {
   let o       = {}
     , sockets = [];
@@ -11,6 +13,7 @@ function socketContainer() {
       let socket = sockets[s];
 
       if (socket.readyState === 1) {
+        // socket.send(JSON.stringify(chunk));
         socket.send(chunk.toString());
       }
     }
