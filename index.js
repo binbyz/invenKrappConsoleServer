@@ -4,10 +4,11 @@
  * krapp websocket server
  * ======================
  */
-const express   = require('express');
-const http      = require('http');
-const WebSocket = require('ws');
-const tfsWrap   = require('./tailStreamWrapper');
+const express         = require('express');
+const http            = require('http');
+const WebSocket       = require('ws');
+const tfsWrap         = require('./tailStreamWrapper');
+const socketContainer = require('./socketContainer');
 
 const app    = express();
 const server = http.createServer(app);
