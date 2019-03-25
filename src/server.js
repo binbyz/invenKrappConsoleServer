@@ -1,4 +1,5 @@
 #!/usr/local/bin/node
+
 const { 
   PATH_NGINX_ACCESS_LOG,
   PATH_NGINX_ERROR_LOG

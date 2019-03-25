@@ -1,5 +1,8 @@
 const BSON = require('bson');
 
+/**
+ * socketContainer
+ */
 function socketContainer() {
   let o       = {}
     , sockets = [];
