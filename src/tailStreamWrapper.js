@@ -1,5 +1,6 @@
 const fs = require('fs');
 const tfs = require('tail-stream');
+const encrpyt = require('./Encrypt');
 
 /**
  * tailStreamWrapper
@@ -8,7 +9,7 @@ const tfs = require('tail-stream');
  * @param {Integer} interval 
  */
 function tailStreamWrapper(namespace = '', path, interval = 100) {
-  let t;
+  let stream;
 
   if (!path) {
     throw new Error("input path");
@@ -18,20 +19,30 @@ function tailStreamWrapper(namespace = '', path, interval = 100) {
     throw new Error("file not exists!");
   }
 
-  t = tfs.createReadStream(path, { interval: interval });
+  stream = tfs.createReadStream(path, { interval: interval });
   namespace = namespace.trim();
 
   if (namespace) {
-    t.namespace = namespace;
+    stream.namespace = namespace;
   }
 
-  t.pipe = (o) => {
+  console.log('stream.namespace', stream.namespace);
+
+  stream.pipe = (o) => {
     if (o) {
-      t.on('data', o._read);
-    }
-  }
+      stream.on('data', o._read); // =socketContainer._read
+      stream.on('data', (chunk) => {
+        let objChunk = encrpyt(JSON.stringify({
+          namespace: encrpyt(stream.namespace),
+          chunk    : encrpyt(chunk.toString())
+        }));
 
-  return t;
+        o._read(objChunk);
+      });
+    }
+  };
+
+  return stream;
 }
 
 module.exports = tailStreamWrapper;

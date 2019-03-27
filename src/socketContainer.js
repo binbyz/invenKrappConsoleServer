@@ -16,13 +16,13 @@ function socketContainer() {
       let socket = sockets[s];
 
       if (socket.readyState === 1) {
-        // socket.send(JSON.stringify(chunk));
-        socket.send(chunk.toString());
+        socket.send(chunk);
       }
     }
   };
 
   o._read = (chunk) => {
+    console.log(chunk);
     o.broadcast(chunk);
   };
 

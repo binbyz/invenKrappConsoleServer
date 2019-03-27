@@ -8,8 +8,10 @@ const {
 const express    = require('express');
 const http       = require('http');
 const WebSocket  = require('ws');
+const atob       = require('atob');
 const tfsWrap    = require('./tailStreamWrapper');
 const sContainer = new (require('./socketContainer'));
+const cmdParser  = new (require('./commandParser'));
 
 const app    = express();
 const server = http.createServer(app);
@@ -28,12 +30,17 @@ wss.broadcast = (data) => {
   });
 };
 
+/**
+ * @todo 접근제어
+ */
 wss.on('connection', (ws) => {
   sContainer.add(ws);
 
+  /**
+   * Receive from Clients
+   */
   ws.on('message', (recv) => {
-    console.log(`received: ${recv}`);
-    ws.send(`Hello, you send -> ${recv}`);
+    let result = cmdParser.parse(JSON.parse(atob(recv)));
   });
 });
 
