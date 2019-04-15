@@ -33,8 +33,8 @@ function tailStreamWrapper(namespace = '', path, interval = 100) {
       stream.on('data', o._read); // =socketContainer._read
       stream.on('data', (chunk) => {
         let objChunk = encrpyt(JSON.stringify({
-          namespace: encrpyt(stream.namespace),
-          chunk    : encrpyt(chunk.toString())
+          namespace: stream.namespace,
+          chunk    : chunk.toString()
         }));
 
         o._read(objChunk);
