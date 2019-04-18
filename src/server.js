@@ -39,9 +39,7 @@ wss.on('connection', (ws) => {
   /**
    * Receive from Clients
    */
-  ws.on('message', (recv) => {
-    let result = cmdParser.parse(JSON.parse(atob(recv)));
-  });
+  ws.on('message', cmdParser.parse);
 });
 
 server.listen(process.env.PORT || 8999, () => {

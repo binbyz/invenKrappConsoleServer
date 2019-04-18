@@ -22,7 +22,6 @@ function socketContainer() {
   };
 
   o._read = (chunk) => {
-    console.log(chunk);
     o.broadcast(chunk);
   };
 
