@@ -1,5 +1,5 @@
-const fs = require('fs');
-const tfs = require('tail-stream');
+const fs      = require('fs');
+const tfs     = require('tail-stream');
 const encrpyt = require('./Encrypt');
 
 /**
@@ -26,18 +26,16 @@ function tailStreamWrapper(namespace = '', path, interval = 100) {
     stream.namespace = namespace;
   }
 
-  console.log('stream.namespace', stream.namespace);
-
-  stream.pipe = (o) => {
-    if (o) {
-      stream.on('data', o._read); // =socketContainer._read
+  stream.pipe = (socketContainer) => {
+    if (socketContainer) {
+      stream.on('data', socketContainer._read);
       stream.on('data', (chunk) => {
         let objChunk = encrpyt(JSON.stringify({
           namespace: stream.namespace,
           chunk    : chunk.toString()
         }));
 
-        o._read(objChunk);
+        socketContainer._read(objChunk);
       });
     }
   };

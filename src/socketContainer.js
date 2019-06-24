@@ -1,31 +1,34 @@
-const BSON = require('bson');
-
 /**
  * socketContainer
  */
 function socketContainer() {
-  let o       = {}
-    , sockets = [];
+  let sockets = []
 
-  o.add = (socket) => {
-    sockets.push(socket);
-  };
+  function add(socket) {
+    sockets.push(socket)
+    
+    return sockets.length - 1
+  }
 
-  o.broadcast = (chunk) => {
+  function broadcast(chunk) {
     for (let s in sockets) {
-      let socket = sockets[s];
+      let socket = sockets[s]
 
       if (socket.readyState === 1) {
-        socket.send(chunk);
+        socket.send(chunk)
       }
     }
-  };
+  }
 
-  o._read = (chunk) => {
-    o.broadcast(chunk);
-  };
+  function _read(chunk) {
+    broadcast(chunk)
+  }
 
-  return o;
+  return {
+    add, 
+    broadcast, 
+    _read
+  }
 }
 
-module.exports = socketContainer;
+module.exports = socketContainer
