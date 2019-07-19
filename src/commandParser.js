@@ -1,6 +1,7 @@
 const util     = require('util')
 const bash     = util.promisify(require('child_process').exec)
 const atob     = require('atob')
+const exec     = require('./exec')
 const spiltter = /(?:\$\$)/ig
 
 const __options = {
@@ -24,45 +25,31 @@ function commandParser() {
       argv = JSON.parse(argv[1])
 
       if (typeof argv === 'object' &&  'type' in argv && 'command' in argv) {
-        argv.command = argv.command.trim().toLowerCase()
+        systemCommand = exec.get(argv.command)
 
-        // TODO: alias로 된 단축어는 인식이 안되는데, 통일되게 관리 할 수 있는 방법이 있을까..
-        switch (argv.command) {
-          case 'reloadall':
-            systemCommand = `sudo /etc/init.d/php7.0-fpm reload | sudo /etc/init.d/nginx reload`
-            break
-          case 'isync':
-            systemCommand = `sudo sh /etc/inven/sync_settings.sh`
-            break;
-          case 'profileoff':
-          case 'profileon':
-            let onoff = (argv.command.replace('profile', '').trim().toLowerCase()) === 'on' ? '1' : '0'
-            systemCommand = `sed -i 's,^xdebug.profiler_enable =.*$,xdebug.profiler_enable = ${onoff},' /etc/php/7.0/fpm/conf.d/20-xdebug.ini | reloadall`
-            break;
-          default:
-        }
+        try {
+          (async () => {
+              if (systemCommand.length) {
+                const { stdout, stderr } = await bash(systemCommand, __options)
 
-        (async () => {
-          try {
-            if (systemCommand.length) {
-              const { stdout, stderr } = await bash(systemCommand, __options)
+                let chunk = {
+                  namespace: argv.namespace,
+                  command  : argv.command,
+                  stdout   : stdout,
+                  stderr   : stderr
+                }
 
-              let chunk = {
-                namespace: argv.namespace,
-                command  : argv.command,
-                stdout   : stdout,
-                stderr   : stderr
+                if (typeof callback === 'function') {
+                  callback(chunk)
+                }
               }
-
-              if (typeof callback === 'function') {
-                callback(chunk)
-              }
-            }
-          } catch (e) {}
-        })()        
+          })() 
+        } catch (e) {
+          console.trace(e)
+        }       
       }
     } else {
-      console.log(` 실행할 수 없는 명령어 입니다.`, argv)
+      console.trace(` 실행할 수 없는 명령어 입니다.`, argv)
     } 
   }
 
