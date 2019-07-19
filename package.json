@@ -2,7 +2,7 @@
   "name": "krapp-shell",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -12,13 +12,13 @@
     "atob": "^2.1.2",
     "bson": "^4.0.2",
     "btoa": "^1.2.1",
-    "express": "^4.16.4",
-    "nodemon": "^1.18.11",
+    "express": "^4.17.1",
+    "nodemon": "^1.19.1",
     "shelljs": "^0.8.3",
     "tail-stream": "^0.3.4",
-    "ws": "^6.2.1"
+    "ws": "^7.1.0"
   },
   "devDependencies": {
-    "ndb": "^1.0.44"
+    "ndb": "^1.1.4"
   }
 }
