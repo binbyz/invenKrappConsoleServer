@@ -18,6 +18,7 @@ function commandParser() {
    * @param Object rawMessage 
    */
   const __fParser = (rawMessage, callback) => {
+    console.log('rawMessage', rawMessage)
     let argv = atob(atob(rawMessage, callback)).split(spiltter)
     let systemCommand = ''
 
@@ -35,8 +36,8 @@ function commandParser() {
                 let chunk = {
                   namespace: argv.namespace,
                   command  : argv.command,
-                  stdout   : stdout,
-                  stderr   : stderr
+                  stdout   : encodeURIComponent(stdout.trim()),
+                  stderr   : encodeURIComponent(stderr.trim())
                 }
 
                 if (typeof callback === 'function') {
