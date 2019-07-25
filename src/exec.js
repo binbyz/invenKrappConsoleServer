@@ -17,7 +17,7 @@ module.exports = class {
       case 'profileon':
       case 'profileoff':
         let onoff = (commands[0].replace('profile', '').trim().toLowerCase()) === 'on' ? '1' : '0'
-        return `sed -i 's,^xdebug.profiler_enable =.*$,xdebug.profiler_enable = ${onoff},' /etc/php/7.0/fpm/conf.d/20-xdebug.ini | ${this.get('reloadall')}`
+        return `sudo sed -i 's,^xdebug.profiler_enable =.*$,xdebug.profiler_enable = ${onoff},' /etc/php/7.0/fpm/conf.d/20-xdebug.ini | ${this.get('reloadall')}`
       case 'dotenv':
         if (commands.length === 2) {
           commands[1] = String(commands[1]).trim().toLowerCase()
