@@ -13,10 +13,11 @@
     "bson": "^4.0.2",
     "btoa": "^1.2.1",
     "express": "^4.17.1",
+    "moment": "^2.24.0",
     "nodemon": "^1.19.1",
     "shelljs": "^0.8.3",
     "tail-stream": "^0.3.4",
-    "ws": "^7.1.0"
+    "ws": "^7.1.1"
   },
   "devDependencies": {
     "ndb": "^1.1.4"
